@@ -1,0 +1,116 @@
+  :root{
+    --navy:#2c3a4f; --navy2:#3d4f68; --ink:#1f2937; --mut:#6b7280;
+    --line:#e5e7eb; --bg:#f4f5f7; --card:#fff; --accent:#e8590c;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:'Apple SD Gothic Neo','Noto Sans KR','Malgun Gothic','맑은 고딕',system-ui,sans-serif;
+    background:var(--bg); color:var(--ink); line-height:1.5;
+    max-width:680px; margin:0 auto;
+    padding-bottom:max(48px,env(safe-area-inset-bottom));
+  }
+  header{
+    background:linear-gradient(135deg,var(--navy),var(--navy2));
+    color:#fff;
+    padding:max(18px,env(safe-area-inset-top)) max(18px,env(safe-area-inset-right)) 14px max(18px,env(safe-area-inset-left));
+  }
+  header h1{margin:0; font-size:21px; letter-spacing:-.3px}
+  header .sub{margin-top:3px; font-size:12.5px; color:#c7d2e0}
+  .chips{margin-top:12px; display:flex; flex-direction:column; gap:6px; font-size:12.5px}
+  .chips div{color:#dde5ef}
+  .chips b{color:#fff; font-weight:600}
+  .chips .k{display:inline-block; min-width:54px; color:#9fb1c9}
+  nav.days{
+    position:sticky; top:0; z-index:600; background:#fff;
+    display:flex; gap:6px; padding:9px 10px; border-bottom:1px solid var(--line);
+    overflow-x:auto; -webkit-overflow-scrolling:touch;
+  }
+  nav.days button{
+    flex:1 0 auto; min-width:78px; border:1px solid var(--line); background:#fff;
+    color:var(--mut); border-radius:11px; padding:7px 8px; font-size:12.5px; font-weight:600;
+    font-family:inherit; cursor:pointer; line-height:1.25; text-align:center;
+  }
+  nav.days button small{display:block; font-size:10.5px; font-weight:500; opacity:.8}
+  nav.days button.on{background:var(--navy); color:#fff; border-color:var(--navy)}
+  #map{width:100%; height:46vh; height:46dvh; min-height:300px; z-index:1; background:#dfe3e8}
+  .leaflet-touch .leaflet-bar a{width:38px; height:38px; line-height:38px}
+  .pin-in{
+    width:26px;height:26px;border-radius:50% 50% 50% 2px; transform:rotate(45deg);
+    border:2px solid #fff; box-shadow:0 1px 4px rgba(0,0,0,.4);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .pin-in span{transform:rotate(-45deg); color:#fff; font-weight:700; font-size:13px}
+  .leaflet-popup-content{font-family:inherit; margin:10px 12px; font-size:13px}
+  .leaflet-popup-content b{font-size:13.5px}
+  .leaflet-popup-content a{color:var(--accent); font-weight:600; text-decoration:none}
+  .legend{display:flex; flex-wrap:wrap; gap:8px 12px; padding:9px 14px; background:#fff;
+    border-bottom:1px solid var(--line); font-size:11px; color:var(--mut)}
+  .legend i{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:4px;vertical-align:middle}
+  .dayhead{padding:14px 16px 4px}
+  .dayhead h2{margin:0; font-size:16px; color:var(--navy)}
+  .dayhead p{margin:3px 0 0; font-size:12px; color:var(--mut)}
+  main{padding:6px 12px 4px}
+  .row{
+    display:flex; gap:11px; background:var(--card); border:1px solid var(--line);
+    border-left-width:4px; border-radius:12px; padding:11px 12px; margin:9px 0;
+  }
+  .row .num{
+    flex:0 0 26px; width:26px;height:26px;border-radius:50%; color:#fff;
+    display:flex;align-items:center;justify-content:center; font-weight:700; font-size:13px; margin-top:1px;
+  }
+  .row .emo{flex:0 0 26px; width:26px; text-align:center; font-size:17px; margin-top:1px}
+  .row .body{flex:1; min-width:0}
+  .row .time{font-size:12px; color:var(--accent); font-weight:700}
+  .row .name{font-size:14.5px; font-weight:600; margin:1px 0 2px}
+  .row .tr{font-size:11.5px; color:#41546b; background:#eef2f7; border-radius:7px;
+    padding:3px 8px; display:inline-block; margin:1px 0 4px; line-height:1.45}
+  .row .memo{font-size:12.5px; color:var(--mut); word-break:keep-all}
+  .row .btns{display:flex; gap:10px; margin-top:8px}
+  .row .btns a, .row .btns button{
+    font-family:inherit; font-size:12px; font-weight:600; border-radius:8px;
+    padding:9px 13px; border:1px solid var(--line); background:#fafafa; color:var(--ink);
+    text-decoration:none; cursor:pointer; min-height:40px;
+    display:inline-flex; align-items:center; justify-content:center;
+  }
+  .row .btns a.nav{background:var(--accent); color:#fff; border-color:var(--accent)}
+  .row.flat{border-left-color:#cbd5e1; background:#fafbfc; padding:9px 12px}
+  .row.flat .name{font-weight:600; font-size:13px; color:#475569}
+  .refs{padding:10px 12px 0}
+  .refs h3{font-size:11.5px; font-weight:700; color:var(--navy); margin:20px 0 6px; padding:6px 12px 5px; background:#eef2f7; border-radius:8px; letter-spacing:-.1px}
+  details{background:#fff; border:1px solid var(--line); border-radius:12px; margin:8px 0; overflow:hidden}
+  summary{padding:12px 14px; font-weight:600; font-size:14px; cursor:pointer; list-style:none;
+    display:flex; justify-content:space-between; align-items:center}
+  summary::-webkit-details-marker{display:none}
+  summary .arr{color:var(--mut); font-size:12px; transition:.2s}
+  details[open] summary .arr{transform:rotate(180deg)}
+  .refbody{padding:2px 14px 14px; font-size:12.5px; border-top:1px solid var(--line)}
+  table{width:100%; border-collapse:collapse; font-size:12px; margin-top:6px}
+  th,td{text-align:left; padding:6px 7px; border-bottom:1px solid var(--line); vertical-align:top}
+  th{color:var(--navy); font-weight:600; background:#f7f8fa}
+  td.jp{font-size:13px}
+  .chk{margin:5px 0; padding-left:2px}
+  .chk b{color:var(--navy)}
+  footer{text-align:center; font-size:11px; color:#9aa3af; padding:18px 16px 6px}
+  #weather{
+    display:flex; gap:6px; padding:7px 12px; background:#fff;
+    border-bottom:1px solid var(--line); overflow-x:auto;
+    -webkit-overflow-scrolling:touch; align-items:center; min-height:46px;
+  }
+  .wlabel{font-size:11.5px; color:var(--mut); white-space:nowrap; flex-shrink:0; padding-right:4px}
+  .wchip{
+    flex:0 0 auto; display:flex; flex-direction:column; align-items:center;
+    background:#f0f4fa; border-radius:10px; padding:5px 10px; min-width:58px; text-align:center; gap:1px;
+  }
+  .wchip .wd{font-size:10px; color:var(--mut); font-weight:600; white-space:nowrap}
+  .wchip .wi{font-size:16px; line-height:1.3}
+  .wchip .wt{font-size:11.5px; font-weight:700; color:var(--ink); line-height:1.2}
+  .wchip .wt small{font-size:10px; font-weight:400; color:var(--mut)}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+  @media(hover:hover){.row{transition:box-shadow .15s,transform .15s}.row:hover{box-shadow:0 3px 14px rgba(0,0,0,.09);transform:translateY(-1px)}}
+
+/* --- 템플릿 추가 --- */
+/* 로컬에선 시각 중립(실제 값 그대로). 배포 빌드가 내용을 •로 치환한다. */
+.secret{}
+/* 참고자료 편집 영역이 비면 섹션 숨김(요소 자식 없음). JS 가드가 보강. */
+.refs:empty{ display:none; }
