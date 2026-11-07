@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>여행 일정</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet-gesture-handling@1.2.2/dist/leaflet-gesture-handling.min.css"/>
+<link rel="stylesheet" href="engine/app.css"/>
+</head>
+<body>
+<header></header>
+<nav class="days" id="days"></nav>
+<div id="weather"><span class="wlabel">날씨 로딩 중…</span></div>
+<div id="map"></div>
+<div class="legend"></div>
+<div class="dayhead" id="dayhead"></div>
+<main id="list"></main>
+
+<section class="refs">
+  <!-- ⟨EDIT: 참고자료 여기부터⟩ -->
+  <h3>🧭 여행 개요</h3>
+
+  <details open>
+    <summary>이동 · 일조 · 오로라 <b>5밤</b> 배치 (1/2~1/6) <span class="arr">▾</span></summary>
+    <div class="refbody">
+      <div class="chk"><b>✈️ 항공(LH·확정)</b> · <b>갈 때</b> 12/31 인천 12:55 → FRA → <b>뮌헨 9h15 밤샘</b> → 1/1 헬싱키 12:00 (2경유). <b>올 때</b> 1/9 <b>12:45</b> 헬싱키 → 뮌헨 1h40 환승 → 1/10 11:15 인천 (1경유·15h30). Comfort Plus(위탁 1×23kg 포함). ⚠️갈 때 뮌헨 밤샘 공략은 아래 접이식 참고.</div>
+      <div class="chk" style="margin-top:4px"><b>🚂 이동</b> · <b>야간열차 왕복</b> + 로바니에미↔이발로 버스(~4h). <b>1/1 신정=헬싱키 휴무</b>라 도착 당일 야간열차로 바로 북상(헬싱키 도착일 호텔 0박). 귀국도 <b>1/7 야간열차로 남하</b> → 1/8 아침 헬싱키 도착·<b>종일 관광</b> → 1/9 오후 비행이라 버퍼 넉넉(새벽 공항 X). 낮 이동일을 안 버리고 헬싱키 호텔도 1박이면 됨.</div>
+      <div class="chk" style="margin-top:4px"><b>일조(극야 주의)</b> · 헬싱키 ≈ 09:20~15:30 / <b>이발로·이나리(68.7°N)는 1/2~1/6 극야(kaamos)—해가 안 뜸</b>(첫 일출 ~1/9). 정오(~12:15) 전후 <b>3~5h 박명</b>만 → 낮 활동(허스키·이나리·순록)은 이 <b>박명창(대략 11~14시)</b>에. (흔히 보는 "일출 10:40·일몰 14:00"은 ~1/19 이후 값)</div>
+      <div class="chk" style="margin-top:4px"><b>왜 5밤(신월 1/7 대신 하루 먼저)?</b> · ①달은 오로라 <b>발생</b>엔 무관하고 약한 오로라 시인성만 낮춤 — 볼지 말지는 <b>구름</b>이 결정. ②이 주간은 <b>1/2~1/6 저녁도 이미 무월광</b>(하현달이 새벽에만 뜸)이라 1/7만의 어둠 이득이 거의 없음. ③6밤→5밤 확률차 <b>~5%p</b>뿐인데 −25°C 야간 관측은 체력전 → 5밤이 합리적. 대신 1/7 야간열차로 남하해 헬싱키 하루 확보.</div>
+      <table style="margin-top:8px">
+        <tr><th>밤</th><th>방식</th><th>운영 원칙</th></tr>
+        <tr><td>1/2(토)</td><td>자체 관측 ①</td><td>이동 이틀차 도착 → 강둑서 1~2h 가볍게</td></tr>
+        <tr><td>1/3(일)</td><td>허스키(낮)+자체 ②</td><td>일요일=픽업 오는 허스키 배치 · 맑으면 자체</td></tr>
+        <tr><td>1/4(월)</td><td>이나리(낮)+자체 ③</td><td>평일 로컬버스+Siida 성립 · 맑으면 자체</td></tr>
+        <tr><td>1/5(화)</td><td>순록(낮)+<b>유료 헌트 ①</b></td><td>미니밴 이동형(구름 회피). 방식·방한·촬영 파악</td></tr>
+        <tr><td>1/6(수)</td><td><b>유료 헌트 ②</b>(마지막)</td><td>달빛 최소·마지막 밤 · 5밤 중 예보 최고인 밤 우선</td></tr>
+      </table>
+      <div class="chk" style="margin-top:6px; color:#9aa3af">유료 헌트 2회(1/5·1/6, 미니밴 구름추적) + 자체 관측 3밤(1/2~1/4, 강둑·고정). 목격 확률은 주로 <b>이동형 헌트 2회</b>가 견인.</div>
+    </div>
+  </details>
+
+  <details>
+    <summary>✈️ 뮌헨 9h15 밤샘 환승 공략 (23:10→08:25) <span class="arr">▾</span></summary>
+    <div class="refbody">
+      <div class="chk"><b>전제</b> · 뮌헨→헬싱키는 인트라-셴겐이라 뮌헨 T2 <b>셴겐존 도착 → 여권/입국심사 없음</b>. 랜드사이드 나갔다 오면 보안검색만 재통과. ⚠️발권 라우팅이 셴겐-투-셴겐인지 확인.</div>
+      <div class="chk" style="margin-top:4px"><b>T2</b> 24h 개방 · 보안검색 <b>~04:30~23:00</b> · 도착객은 그냥 에어사이드 잔류 가능(귀중품 주의).</div>
+      <div class="chk" style="margin-top:6px"><b>★추천 — Napcab 수면 캡슐</b>(에어사이드, 국경/보안 이슈 회피) · 방음 개인캡슐·평상 침대·전원·알람 24/7 · T2 <b>Gates G/H Level 3·4</b> · 야간(22~06) <b>€12/h</b>, 23:20~07:00창 ≈ <b>€90~100</b> · booking.napcabs.com. 침대+에어사이드 유지가 최대 장점.</div>
+      <div class="chk" style="margin-top:4px"><b>대안 — Hilton Munich Airport</b>(실침대, 랜드사이드, T1–T2 직결 도보) · 오버나이트 룸 ~€150+ · ⚠️랜드사이드는 <b>보안 재개(~04:30) 전 재입장 불가</b> → 06:30~07:00 재검색이면 08:25편 여유. 새벽 3시 재입장 계획 금지.</div>
+      <div class="chk" style="margin-top:4px"><b>라운지</b> LH Senator/Business T2 ~05:00~22:00(23:10 도착 시 폐쇄, 05:00 재개) · 스타얼라이언스 골드/유료패스 필요.</div>
+      <div class="chk" style="margin-top:4px"><b>수하물</b> · 단일 through-check면 위탁은 헬싱키까지 태그 → 캡슐/호텔엔 기내수하물만. 출발지 체크인 시 through-check 확인.</div>
+    </div>
+  </details>
+
+  <h3>🏨 숙소 · 예산 (4인)</h3>
+
+  <details>
+    <summary>4인 숙소 조합 (이발로 5박 + 야간열차 왕복) <span class="arr">▾</span></summary>
+    <div class="refbody">
+      <div class="chk"><b>헬싱키</b> · Hotel Arthur(Vuorikatu 19 · 중앙역 도보 5분) · <b>1/8 1박만</b>. 도착일(1/1)·귀국 전날(1/7)은 야간열차라 헬싱키 호텔 안 잡음.</div>
+      <div class="chk"><b>이발로</b> · <b>Riverhouse Lumo</b> · <b>5박(1/2~1/7)</b> · Booking.com/Lomarengas #17658. ⚠️예약 화면서 세금·침구·퇴실청소·무료취소 확인. <b>1/2 체크인·5박</b>으로.</div>
+      <table>
+        <tr><th>구간</th><th>숙소</th><th>목표(4인 합)</th></tr>
+        <tr><td>야간열차 1/1(북행)</td><td>침대칸(2인실 2칸)</td><td>~€200~400 (성수기)</td></tr>
+        <tr><td>이발로 1/2~1/7</td><td><b>Riverhouse Lumo</b></td><td><b>5박</b> 185~260만</td></tr>
+        <tr><td>야간열차 1/7(남행)</td><td>침대칸(2인실 2칸)</td><td>~€200~350</td></tr>
+        <tr><td>헬싱키 1/8~1/9</td><td>Hotel Arthur</td><td>1박 24~35만</td></tr>
+      </table>
+    </div>
+  </details>
+
+  <details>
+    <summary>🏠 Riverhouse Lumo 상세 <span class="arr">▾</span></summary>
+    <div class="refbody">
+      <div class="chk"><b>Ivalojoki 강변 코티지</b> · 3침실 <b>120㎡ 2층·6인 수용</b>(160cm 더블1 + 90cm×2 침실 2개, 3개는 전동 조절) → 4인 적합.</div>
+      <div class="chk" style="margin-top:4px"><b>주방</b> 오픈형·전기조리·식기세척기·냉장/냉동(완전 자취) · <b>사우나</b> 1층 개인 전기 사우나 · 전용해변+테라스/발코니·옥외 그릴.</div>
+      <div class="chk" style="margin-top:4px"><b>위치</b> 이발로 중심 도로 ~2.7km(직선 1.9km)·IVL 공항 ~9km·사리셀카 스키센터 ~25km · 무료 전용주차·WiFi · 침구+최종청소 포함.</div>
+      <div class="chk" style="margin-top:4px; color:#9aa3af">"강둑서 오로라"는 마케팅 문구지만 강변 입지·오로라 위도권은 확정. 지도 핀은 <b>Riverhouse Lumo Ivalo</b> 검색으로 잡을 것(정확 좌표 CONFIRM).</div>
+    </div>
+  </details>
+
+  <details>
+    <summary>예산 (1인 · 만원, 4인 분담) <span class="arr">▾</span></summary>
+    <div class="refbody">
+      <table>
+        <tr><th>항목</th><th>1인</th><th>설명</th></tr>
+        <tr><td>국제선 왕복(LH 2경유·Comfort Plus)</td><td>~120~130</td><td>위탁 1×23kg 포함(₩1,289,000선)</td></tr>
+        <tr><td>야간열차 왕복(1/1·1/7)</td><td>20~35</td><td>침대칸 4인=2인실 2칸×2, 성수기</td></tr>
+        <tr><td>버스(로바니에미↔이발로 왕복)</td><td>12~18</td><td>Eskelisen ~4h ×2</td></tr>
+        <tr><td>이발로 <b>5박</b></td><td>46~65</td><td>객실 185~260만 4인 분담</td></tr>
+        <tr><td>헬싱키 1박(1/8)</td><td>6~9</td><td>객실 24~35만 4인 분담</td></tr>
+        <tr><td>오로라 유료 2회</td><td>30~44</td><td>Northern Polar €189(예약49+발견140) 등</td></tr>
+        <tr><td>허스키+순록+이나리</td><td>25~33</td><td>Ivalo Safaris €125·Reindeer €40·Siida €18</td></tr>
+        <tr><td>식비</td><td>28~38</td><td>아파트 조리 비중↑(5박)</td></tr>
+        <tr><td>뮌헨 밤샘(Napcab 등)</td><td>4~8</td><td>캡슐 ~€90~100/2인실 or 라운지</td></tr>
+        <tr><td>사우나·보험·eSIM·기타</td><td>12~20</td><td>숙소 개인사우나라 사우나비↓</td></tr>
+        <tr><th>합계</th><th>303~400</th><th>5밤·야간열차 왕복 반영, 4인 분담으로 방값↓</th></tr>
+      </table>
+      <div class="chk" style="margin-top:8px">장보기·택시·숙소는 <b>공동 결제 후 정산 앱 즉시 기록</b>. 항공권이 변수(110~140+) — 위탁 포함 총액 기준. 모든 투어가는 2027 예약 시 재확인.</div>
+    </div>
+  </details>
+
+  <h3>🌌 오로라 · 허스키 · 순록 투어</h3>
+
+  <details>
+    <summary>업체 shortlist (전부 실존 이발로 픽업 · 2027 요금 예약 시 재확인) <span class="arr">▾</span></summary>
+    <div class="refbody">
+      <div class="chk" style="margin-bottom:6px"><b>예약 전 체크</b> · ①픽업 범위 ②방한장비 제공 ③구름추적 이동성(주행거리) ④무료취소 ⑤전문사진 파일. <b>어떤 업체도 오로라 목격은 보장 못 함.</b></div>
+      <div class="chk"><b>오로라 (차량/미니밴 클라우드체이싱)</b></div>
+      <div class="chk">· <b>Northern Polar Xperience</b>(Inari) — 소그룹 구름추적·숙소 픽업·<b>사진 포함</b> · <b>189€=예약49€+발견시140€</b>, 미발견=49€만·기상취소 100%환불 · 방한복 직접 · WhatsApp +358 50 374 7574. ★가격 투명 베스트</div>
+      <div class="chk">· <b>Northern Lights Riders</b>(Ivalo) — 이발로 기반 미니밴 추적(Ivalo–Inari–Saariselkä)·Tripadvisor 이발로 2위(324리뷰)·가격 문의</div>
+      <div class="chk">· <b>Ivalo Experiences</b> — 미니밴 추적 / 순록+사미오두막 오로라夜(교통 +45€/인)</div>
+      <div class="chk" style="margin-top:6px"><b>허스키 (2h 주간 사파리)</b></div>
+      <div class="chk">· <b>Ivalo Safaris</b> — 성인 <b>€125</b>/아동 €70 · 출발 ~10:35~10:50 · <b>마을 픽업 포함</b>·방한복+음료+간식·2인1썰매 중간교대 · johku 예약. ★자력 여행객 베스트</div>
+      <div class="chk">· <b>Extreme Huskies</b>(성인 €195·자율주행·픽업 €10/인 별도·18세 미만 운전불가) · <b>Aurora Village Ivalo</b>(성인 €195·리조트 프런트 픽업만)</div>
+      <div class="chk" style="margin-top:6px"><b>순록 (주간 방문·썰매)</b></div>
+      <div class="chk">· <b>Ivalo Reindeer Farm</b> — 이발로 6km · 성인 <b>€40</b>/아동 €25(0.5h~) · 먹이/사진·티피·라쏘·썰매 탑승 · ivaloreindeerfarm.com. ★근거리 베스트</div>
+      <div class="chk">· <b>Reindeer Farm Petri Mattus</b>(정통 사미·스노모빌 견인 썰매+모닥불 · Menesjärvi 30km·<b>픽업無·예약필수</b> petri.mattus@gmail.com) · <b>Ivalo Experiences "herder day"</b>(얼음낚시+먹이·이발로 픽업)</div>
+    </div>
+  </details>
+
+  <h3>📊 오로라 볼 확률 (정직판)</h3>
+
+  <details>
+    <summary>"밤 많으면 99%?" — 아니오, 5밤 ~75~82% <span class="arr">▾</span></summary>
+    <div class="refbody">
+      <div class="chk"><b>결론</b> · 이번 구성(유료 이동형 헌트 2밤 + 자체 관측 3밤)이면 <b>한 번 이상 볼 확률 ≈ 75~82%</b>. 매우 좋지만 "거의 확실"은 아님. <b>약 18~25%는 못 봄</b> — 원인은 오로라 부재가 아니라 <b>구름</b>. 확률은 주로 <b>이동형 헌트 2회</b>가 견인(자체 관측은 고정지점이라 per-night 낮음).</div>
+      <div class="chk" style="margin-top:6px"><b>왜 "맑은 밤 50% × 여러 밤 = 99%"가 틀렸나</b></div>
+      <div class="chk">· 공식 1−(1−p)ⁿ는 p=0.5·5밤이면 97%지만, 그 <b>50%는 "맑고 어두운 밤" 조건부</b>(FMI 통계).</div>
+      <div class="chk">· 1월 라플란드 평균 운량 ≈ 80%(연중 가장 흐림) → 무조건부 per-night ≈ 0.5×0.3 ≈ <b>0.15</b> → 고정지점 3밤(자체 관측)이면 ~39%.</div>
+      <div class="chk">· 게다가 <b>밤들이 독립이 아님</b> — 겨울 구름은 2~4일 지속 → 5밤 ≈ 실질 <b>2~3번의 날씨 추첨</b>뿐. 이게 "무조건"이 거짓인 핵심.</div>
+      <div class="chk" style="margin-top:6px"><b>차량 헌팅의 효과</b> · 100~200km로 구름 회피·샘플링 → per-night "쓸 만한 하늘" 0.3 → <b>0.45~0.55</b>로 상승. 단 지역 전체 overcast는 못 이김. (가이드 헌팅이 존재하는 이유.)</div>
+      <div class="chk" style="margin-top:6px"><b>태양활동(2027.1)</b> · Solar Cycle 25 극대 = 2024.10 → 2027.1은 <b>~2¼년 하강기(극대의 50~70% 유지)</b>. 하강기는 코로나홀 고속태양풍으로 <b>오로라대 위도엔 오히려 유리</b>. 극대에서 잃는 건 "중위도까지 끌려오는 초대형 폭풍"뿐이라 68°N엔 무관. (참고: 2월말~3월이 1월보다 맑고 유리하지만, 1월 초 신월 주간이라 달빛 방해는 어차피 최소.)</div>
+    </div>
+  </details>
+
+  <details>
+    <summary>🛰️ 오로라 예보 앱 · Kp 읽는 법 <span class="arr">▾</span></summary>
+    <div class="refbody">
+      <div class="chk"><b>오늘 밤</b>은 로컬 자력계·태양풍 Bz를 Kp보다 우선, <b>며칠 계획</b>은 Kp/앱. 항상 <b>구름 예보 교차확인</b>.</div>
+      <div class="chk" style="margin-top:4px">· <b>FMI "Auroras Now!"</b> — 자북 변화율(dX/dt) 임계 초과로 실시간 지역 신호 (en.ilmatieteenlaitos.fi)</div>
+      <div class="chk">· <b>MIRACLE 올스카이 카메라</b>(FMI/오울루대) — 핀란드 관측소 실시간 하늘</div>
+      <div class="chk">· <b>SpaceWeatherLive</b> — Kp·실시간 태양풍(Bz·속도·밀도)·오벌·알림</div>
+      <div class="chk">· <b>My Aurora Forecast &amp; Alerts</b>(iOS/Android 무료) — Kp+태양풍+오벌 지도·푸시</div>
+      <div class="chk" style="margin-top:6px"><b>Kp 읽기(68°N)</b> · Kp 0~9, 3시간 지수. 이발로(지자기 ~65°N)는 <b>Kp 0.5~1</b>만 돼도 뚜렷한 아크. Kp 5~6+에선 밝은 띠가 <b>남쪽 하늘</b>로 이동. 오벌 내부라 Kp의 로컬 예측력은 약함 → 실시간 트리거는 <b>로컬 서브스톰(dX/dt)</b>과 <b>Bz 강한 남향 전환</b>.</div>
+    </div>
+  </details>
+
+  <h3>❄️ 방한 · 촬영 · 안전 (−20~−30°C 정지 관측)</h3>
+
+  <details>
+    <summary>의류 (수 시간 서 있기 전제) <span class="arr">▾</span></summary>
+    <div class="refbody">
+      <table>
+        <tr><th>부위</th><th>구성</th></tr>
+        <tr><td>상의 3겹</td><td>메리노/합성 베이스 → 두꺼운 플리스·울 → 방풍·발수 다운파카(후드)</td></tr>
+        <tr><td>하의 2~3겹</td><td>써멀 레깅스 → 인슐 방풍 스노우팬츠 (−30°C면 두꺼운 타이츠 추가)</td></tr>
+        <tr><td>발</td><td>극한용 겨울부츠(Sorel/Kamik류) + 두꺼운 울양말 1켤레 + 발핫팩. <b>양말 2겹·꽉 끼는 부츠 금지</b>(혈행 차단)</td></tr>
+        <tr><td>손</td><td>얇은 터치 라이너 + 두꺼운 <b>벙어리장갑</b>(손가락 열공유), 안에 핫팩. 촬영은 몇 초만 라이너</td></tr>
+        <tr><td>머리·얼굴</td><td>귀 덮는 니트모+후드, 발라클라바/넥게이터로 코·볼(노출 피부 동상 1순위)</td></tr>
+      </table>
+      <div class="chk" style="margin-top:6px"><b>면 소재 전면 금지</b>(땀 흡수→젖어서 급속 냉각). 정지 상태라 움직임에 의존 X → <b>과하게 입고</b> 가라.</div>
+    </div>
+  </details>
+
+  <details>
+    <summary>📷 오로라 촬영 세팅 (폰 · 카메라) <span class="arr">▾</span></summary>
+    <div class="refbody">
+      <div class="chk"><b>폰</b> · 삼각대/바위에 <b>고정</b>(안정성 최우선) · 나이트모드 최장노출 · Pro/수동이면 ISO 800~3200, 셔터 5~10s(약하면 15~20s), 먼 불빛 탭해 무한대 초점 고정, 플래시 OFF, 가능하면 RAW.</div>
+      <div class="chk" style="margin-top:4px"><b>카메라</b> · 수동, 조리개 최대개방(f/2.8, 가능하면 f/1.4~2), ISO 800~3200, 셔터 5~15s(빠른 커튼 짧게·부드러운 발광 길게), 라이브뷰서 밝은 별로 무한대 수동초점, 튼튼한 삼각대+릴리즈/2초 타이머, 광각.</div>
+      <div class="chk" style="margin-top:4px"><b>배터리</b> · 여분은 <b>안주머니에 따뜻하게</b> 보관·교대(냉기에 급방전).</div>
+      <div class="chk"><b>결로 주의</b> · 실내 진입 전 카메라/렌즈/폰을 지퍼백·가방에 <b>밀봉</b> → 1~2h 밀봉 상태로 상온화 후 개봉. 야외에서 렌즈에 입김 금지(성에).</div>
+    </div>
+  </details>
+
+  <details>
+    <summary>🚨 안전 <span class="arr">▾</span></summary>
+    <div class="refbody">
+      <div class="chk">· <b>얼어붙은 호수/강 단독 진입 금지</b> — 눈 덮인 백아이스는 투명빙 ~절반 강도. 가이드 동반·정비된 아이스루트만.</div>
+      <div class="chk">· 그룹/가이드와 동행, 어둠 속 단독 이탈 금지. 숙소에 동선·복귀 예정 시간 고지.</div>
+      <div class="chk">· <b>투어 전·중 음주 금지</b>(열손실 가속·판단력 저하·동상/저체온 신호 은폐).</div>
+      <div class="chk">· <b>핀란드 긴급번호 112</b> · <b>112 Suomi 앱</b> 설치(GPS 위치 자동 송신).</div>
+    </div>
+  </details>
+
+  <h3>ℹ️ 이발로 마을 실용정보</h3>
+
+  <details>
+    <summary>마트 · 식당 · 사우나 <span class="arr">▾</span></summary>
+    <div class="refbody">
+      <div class="chk"><b>S-Market Ivalo</b> — 마을 최대 마트(식료품·순록고기·아웃도어/의류·카페) · <b>동 건물 내 Alko(주류)</b>.</div>
+      <div class="chk"><b>K-Supermarket Ivalo</b>(Ivalontie 17) — 건물 내 <b>우체국(Posti)</b>+카페 · ⚠️영업시간 소스 충돌 → k-ruoka.fi/앱 확인.</div>
+      <div class="chk" style="margin-top:6px"><b>식당</b> · Restaurant Kultahippu(Hotel Kultahippu·강변·북부 특선 à la carte) · Hotelli Ivalo 레스토랑+바.</div>
+      <div class="chk" style="margin-top:6px"><b>사우나</b> · 독립 공용 사우나는 불확실 — 숙소 <b>Riverhouse Lumo 개인 사우나</b> 활용(호텔 사우나 비투숙객 이용 여부는 문의).</div>
+    </div>
+  </details>
+
+  <h3>📋 예약 · 체크리스트</h3>
+
+  <details>
+    <summary>예약 순서와 판단선 <span class="arr">▾</span></summary>
+    <div class="refbody">
+      <table>
+        <tr><th>순서</th><th>항목</th><th>실행 기준</th></tr>
+        <tr><td>1</td><td>국제선(LH·확정)</td><td>Comfort Plus 위탁 1×23kg·뮌헨 through-check 확인</td></tr>
+        <tr><td>2</td><td>이발로 Riverhouse Lumo</td><td><b>1/2~1/7 5박</b> 무료취소 · Booking/Lomarengas #17658</td></tr>
+        <tr><td>3</td><td>야간열차 왕복(vr.fi)</td><td><b>1/1 북행·1/7 남행</b>·침대칸 2인실 2칸 · 출발 10개월 전 예약창</td></tr>
+        <tr><td>4</td><td>버스 로바니에미↔이발로</td><td>Matkahuolto서 <b>1/2 북행 첫차 실시각</b>(08:00 vs 11:25)·1/7 남행 열차연결 확인</td></tr>
+        <tr><td>5</td><td>헬싱키 Hotel Arthur</td><td><b>1/8 1박</b></td></tr>
+        <tr><td>6</td><td>오로라 헌트 ×2</td><td><b>1/5·1/6</b> · Northern Polar 등 · 무료취소·이동성·사진 비교</td></tr>
+        <tr><td>7</td><td>허스키·이나리·순록</td><td>허스키 <b>1/3</b> Ivalo Safaris(johku)·이나리 <b>1/4</b>(로컬버스+Siida)·순록 <b>1/5</b> Ivalo Reindeer Farm</td></tr>
+        <tr><td>8</td><td>뮌헨 밤샘</td><td>Napcab 캡슐(booking.napcabs.com) or 힐튼 · 라운지 패스</td></tr>
+      </table>
+    </div>
+  </details>
+
+  <details>
+    <summary>✅ 최종 체크리스트 <span class="arr">▾</span></summary>
+    <div class="refbody">
+      <div class="chk">☐ 국제선 12/31 출발·1/9 12:45 헬싱키 출발 확정 · 위탁 through-check</div>
+      <div class="chk">☐ 이발로 Riverhouse Lumo <b>1/2~1/7 (5박)</b> 예약(무료취소)</div>
+      <div class="chk">☐ 야간열차 <b>1/1 북행·1/7 남행</b> 침대칸 2인실 2칸 vr.fi</div>
+      <div class="chk">☐ 버스 로바니에미↔이발로 <b>1/2 첫차 실시각</b>·1/7 남행 연결 Matkahuolto</div>
+      <div class="chk">☐ 헬싱키 Hotel Arthur <b>1/8</b> 1박</div>
+      <div class="chk">☐ 오로라 헌트 <b>1/5·1/6</b> 예약(픽업·이동성·사진·환불)</div>
+      <div class="chk">☐ 허스키 <b>1/3</b>(Ivalo Safaris)·이나리 <b>1/4</b>(Siida 월–토)·순록 <b>1/5</b>(Ivalo Reindeer Farm)</div>
+      <div class="chk">☐ 1/6 주현절·5일치 식료품 도착일(1/2)에 넉넉히(S-Market+Alko)</div>
+      <div class="chk">☐ 뮌헨 9h15 밤샘 대비(Napcab/힐튼/라운지)</div>
+      <div class="chk">☐ 보험·eSIM·방한복(업체 미제공 대비)·보조배터리·삼각대 · 112 Suomi 앱</div>
+    </div>
+  </details>
+
+  <details>
+    <summary>🔗 공식 확인처 <span class="arr">▾</span></summary>
+    <div class="refbody">
+      <div class="chk">· 핀란드 기상청(FMI) — Auroras Now! / 우주기상 (en.ilmatieteenlaitos.fi)</div>
+      <div class="chk">· Timeanddate — 2027.1 Finland 달력·달위상(신월 1/7 확인)</div>
+      <div class="chk">· VR(vr.fi) — 야간열차 · Matkahuolto/Eskelisen Lapin Linjat — 버스</div>
+      <div class="chk">· Siida(siida.fi) · Ivalo Safaris(ivalosafaris.fi) · Ivalo Reindeer Farm(ivaloreindeerfarm.com) · Northern Polar(northernpolar.com)</div>
+      <div class="chk">· Napcab(booking.napcabs.com) · Hotel Arthur / Riverhouse Lumo(Lomarengas #17658)</div>
+      <div class="chk" style="color:#9aa3af; margin-top:6px">※ 업체·가격·시각은 2025/26 실측 기준 — 2027 예약 화면 최종값 우선. 오로라 목격은 어떤 예약으로도 보장되지 않음.</div>
+    </div>
+  </details>
+  <!-- ⟨EDIT: 참고자료 끝⟩ -->
+</section>
+
+<footer></footer>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet-gesture-handling@1.2.2/dist/leaflet-gesture-handling.min.js"></script>
+<script src="engine/lib/dates.js"></script>
+<script src="engine/lib/legend.js"></script>
+<script src="engine/lib/categories.js"></script>
+<script src="data.js"></script>
+<script src="engine/app.js"></script>
+</body>
+</html>
